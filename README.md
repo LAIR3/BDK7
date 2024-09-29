@@ -1,3 +1,7 @@
+# check geth-lighthouse logs
+kurtosis service logs bdk7 el-1-geth-lighthouse
+
+
 # Polygon CDK Kurtosis Package
 
 A [Kurtosis](https://github.com/kurtosis-tech/kurtosis) package that deploys a private, portable, and modular [Polygon CDK](https://docs.polygon.technology/cdk/) devnet over [Docker](https://www.docker.com/) or [Kubernetes](https://kubernetes.io/).
