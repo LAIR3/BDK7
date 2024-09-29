@@ -457,7 +457,13 @@ Accessible via: http://127.0.0.1:49651
 
 
 # check geth-lighthouse logs
+```bash
 kurtosis service logs bdk7 el-1-geth-lighthouse
+# check statuss
+kurtosis enclave ls
+kurtosis enclave inspect bdk7
+```
+
 
 
 # Polygon CDK Kurtosis Package
