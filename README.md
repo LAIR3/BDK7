@@ -503,46 +503,42 @@ Alternatively, deploy CDK stack using zkevm-node:
 ```bash
 kurtosis run --enclave bdk7 --args-file cdk-erigon-sequencer-params.yml --image-download always .
 ```
-3. Interact with RPC
+# Interact with RPC
 
     Inspect the enclave for RPC ports:
 
-    bash
-
+```bash
 kurtosis enclave inspect bdk7
 export ETH_RPC_URL="$(kurtosis port print bdk7 zkevm-node-rpc-001 http-rpc)"
-
+```
 Test RPC with Foundry commands:
 
-bash
-
-    cast block-number
-    cast balance --ether 0xE34aaF64b29273B7D567FCFc40544c014EEe9970
-
-4. Sending Transactions
+```bash
+cast block-number
+cast balance --ether 0xE34aaF64b29273B7D567FCFc40544c014EEe9970
+```
+# Sending Transactions
 
     Send Ether:
-
-    bash
+```bash
 
 export PK="0x12d7de8621a77640c9241b2595ba78ce443d05e94090365ab3bb5e19df82c625"
 cast send --legacy --private-key "$PK" --value 0.01ether 0x0000000000000000000000000000000000000000
+```
 
 Load testing with polygon-cli:
 
-bash
+```bash
+polycli loadtest --rpc-url "$ETH_RPC_URL" --legacy --private-key "$PK" --verbosity 700 --requests 500 --rate-limit 10 --mode t
+```
+# Observability and Monitoring
 
-    polycli loadtest --rpc-url "$ETH_RPC_URL" --legacy --private-key "$PK" --verbosity 700 --requests 500 --rate-limit 10 --mode t
+Use Prometheus and Grafana for metrics:
 
-5. Observability and Monitoring
-
-    Use Prometheus and Grafana for metrics:
-
-    bash
-
-    open http://127.0.0.1:49651/targets  # Prometheus
-    open http://127.0.0.1:49701/login    # Grafana
-
+```bash
+open http://127.0.0.1:49651/targets  # Prometheus
+open http://127.0.0.1:49701/login    # Grafana
+```
 # Service Management
 
     Check logs:
