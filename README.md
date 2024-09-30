@@ -466,6 +466,108 @@ kurtosis enclave inspect bdk7
 
 
 
+The LAIR3-BDK provides a comprehensive set of commands and tools to facilitate blockchain deployment, primarily utilizing the Kurtosis SDK. Here is a summary of the key commands:
+
+# Environment Setup
+
+    Install dependencies such as Go, Node.js, Docker, and Kurtosis on Ubuntu.
+
+  ```bash
+sudo apt install wget
+wget https://go.dev/dl/go1.21.6.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go
+sudo tar -xvf go1.21.6.linux-amd64.tar.gz -C /usr/local/
+echo 'export PATH="$PATH:/usr/local/go/bin"' | sudo tee -a ./bashrc
+source $HOME/.bashrc
+go version
+```
+Install Kurtosis:
+
+```bash
+
+    echo "deb [trusted=yes] https://apt.fury.io/kurtosis-tech/ /" | sudo tee /etc/apt/sources.list.d/kurtosis.list
+    sudo apt update
+    sudo apt install kurtosis-cli
+```
+
+# Deploying the BDK Stack
+
+    Run BDK locally:
+
+```bash
+kurtosis clean --all
+kurtosis run --enclave bdk7 --args-file params.yml --image-download always .
+```
+Alternatively, deploy CDK stack using zkevm-node:
+
+```bash
+kurtosis run --enclave bdk7 --args-file cdk-erigon-sequencer-params.yml --image-download always .
+```
+3. Interact with RPC
+
+    Inspect the enclave for RPC ports:
+
+    bash
+
+kurtosis enclave inspect bdk7
+export ETH_RPC_URL="$(kurtosis port print bdk7 zkevm-node-rpc-001 http-rpc)"
+
+Test RPC with Foundry commands:
+
+bash
+
+    cast block-number
+    cast balance --ether 0xE34aaF64b29273B7D567FCFc40544c014EEe9970
+
+4. Sending Transactions
+
+    Send Ether:
+
+    bash
+
+export PK="0x12d7de8621a77640c9241b2595ba78ce443d05e94090365ab3bb5e19df82c625"
+cast send --legacy --private-key "$PK" --value 0.01ether 0x0000000000000000000000000000000000000000
+
+Load testing with polygon-cli:
+
+bash
+
+    polycli loadtest --rpc-url "$ETH_RPC_URL" --legacy --private-key "$PK" --verbosity 700 --requests 500 --rate-limit 10 --mode t
+
+5. Observability and Monitoring
+
+    Use Prometheus and Grafana for metrics:
+
+    bash
+
+    open http://127.0.0.1:49651/targets  # Prometheus
+    open http://127.0.0.1:49701/login    # Grafana
+
+# Service Management
+
+    Check logs:
+
+```bash
+kurtosis service logs bdk7 zkevm-agglayer-001
+```
+Open a service shell for debugging:
+
+```bash
+kurtosis service shell bdk7 zkevm-node-sequencer-001
+```
+
+# Clean Up
+
+    Remove all Docker containers, images, and volumes:
+
+```bash
+
+    docker stop $(docker ps -aq)
+    docker rm $(docker ps -aq)
+    docker rmi -f $(docker images -q)
+    docker system prune -a --volumes
+```
+
 # Polygon CDK Kurtosis Package
 
 A [Kurtosis](https://github.com/kurtosis-tech/kurtosis) package that deploys a private, portable, and modular [Polygon CDK](https://docs.polygon.technology/cdk/) devnet over [Docker](https://www.docker.com/) or [Kubernetes](https://kubernetes.io/).
